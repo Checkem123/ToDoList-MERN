@@ -1,0 +1,100 @@
+.btn-edit svg,
+.btn-delete svg {
+    width: 20px;
+    height: 20px;
+}
+
+.task-list {
+    margin-top: 40px;
+}
+
+.list {
+    font-size: 1.4rem;
+    list-style-type: none;
+    background-color: transparent;
+    color: white;
+    margin: 20px 0;
+    cursor: grab;
+}
+
+fieldset {
+    border: 3px dotted white;
+    padding: 20px;
+}
+
+legend {
+    font-size: 14px;
+    padding: 0 8px;
+}
+
+.list-content {
+    display: flex;
+    align-items: center;
+}
+
+.description {
+    margin-right: 16px;
+}
+
+.btn-delete,
+.btn-edit {
+    border: 0;
+    padding: 10px;
+    background-color: transparent;
+    font-size: 16px;
+    color: aliceblue;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-edit {
+    margin-left: auto;
+    margin-right: 14px;
+    border: 2px solid #71717a;
+    background-color: transparent;
+    transition: background-color 0.1s ease-in-out;
+}
+
+.btn-edit:hover {
+    border: 2px solid #71717a;
+    background-color: #71717a;
+}
+
+.btn-delete {
+    border: 2px solid #ef4444;
+    background-color: #ef4444;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.btn-delete:hover {
+    border: 2px solid #ef4444;
+    background-color: transparent;
+}
+
+@media screen and (max-width: 450px) {
+    .btn-edit svg,
+    .btn-delete svg {
+        width: 18px;
+        height: 14px;
+    }
+    .task-list {
+        margin-top: 22px;
+    }
+    .list {
+        font-size: 1rem;
+    }
+    fieldset {
+        border: 2px dotted aliceblue;
+        padding: 10px;
+    }
+    legend {
+        font-size: 10px;
+    }
+    .btn-delete,
+    .btn-edit {
+        padding: 2px 6px;
+    }
+    .btn-edit {
+        margin-right: 8px;
+    }
+}

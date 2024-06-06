@@ -1,4 +1,11 @@
-import { useState, createContext } from "react";
+import {
+    useState,
+    createContext,
+    ReactNode,
+    Dispatch,
+    SetStateAction,
+    FC,
+} from "react";
 
 type ModalTypes = {
     action: string;
@@ -6,35 +13,28 @@ type ModalTypes = {
 };
 
 interface ModalContextType {
+    id: number;
+    setId: Dispatch<SetStateAction<number>>;
     modal: boolean;
-    setModal: React.Dispatch<React.SetStateAction<boolean>>;
+    setModal: Dispatch<SetStateAction<boolean>>;
     type: ModalTypes;
-    setType: React.Dispatch<React.SetStateAction<ModalTypes>>;
+    setType: Dispatch<SetStateAction<ModalTypes>>;
 }
 
 const ModalContext = createContext<ModalContextType | null>(null);
 
 interface ModalContextProviderProps {
-    children: React.ReactNode;
+    children: ReactNode;
 }
 
-const ModalContextProvider: React.FC<ModalContextProviderProps> = ({
-    children,
-}) => {
+const ModalContextProvider: FC<ModalContextProviderProps> = ({ children }) => {
+    const [id, setId] = useState<number>(0);
     const [modal, setModal] = useState<boolean>(false);
-    const [type, setType] = useState<ModalTypes>({
-        action: "",
-        fields: [],
-    });
+    const [type, setType] = useState<ModalTypes>({ action: "", fields: [] });
 
     return (
         <ModalContext.Provider
-            value={{
-                modal,
-                setModal,
-                type,
-                setType,
-            }}
+            value={{ id, setId, modal, setModal, type, setType }}
         >
             {children}
         </ModalContext.Provider>

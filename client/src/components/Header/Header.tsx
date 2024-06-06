@@ -4,6 +4,7 @@ import { ModalContext } from "../../contexts/modalContext";
 import { LoggedInContext } from "../../contexts/loggedInContext";
 
 const Header = () => {
+    
     const modalContext = useContext(ModalContext);
     if (!modalContext) {
         throw new Error(
@@ -32,6 +33,11 @@ const Header = () => {
         });
     };
 
+    const handleLogoutClick = () => {
+        localStorage.removeItem("token");
+        setloggedIn(false);
+    };
+
     const displayButtons = () => {
         if (!loggedIn) {
             return (
@@ -57,10 +63,7 @@ const Header = () => {
                 >
                     Profile
                 </button> */}
-                <button
-                    className="btn logout"
-                    onClick={() => setloggedIn(false)}
-                >
+                <button className="btn logout" onClick={handleLogoutClick}>
                     Log out
                 </button>
             </>

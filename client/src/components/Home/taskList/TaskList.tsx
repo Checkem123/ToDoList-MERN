@@ -3,118 +3,121 @@ import { RxUpdate } from "react-icons/rx";
 import { useContext, useEffect, useState } from "react";
 import { ModalContext } from "../../../contexts/modalContext";
 import { TasksContext } from "../../../contexts/tasksContext";
+import { LoggedInContext } from "../../../contexts/loggedInContext";
 import "./tasklist.css";
-import type { TaskProps } from "../../../contexts/tasksContext";
-
-const data = [
-    {
-        userId: 1,
-        id: 1,
-        title: "Some random description",
-        completed: false,
-    },
-    {
-        userId: 1,
-        id: 2,
-        title: "task n°2",
-        completed: false,
-    },
-    {
-        userId: 1,
-        id: 3,
-        title: "sdfdsfwfg",
-        completed: false,
-    },
-    {
-        userId: 1,
-        id: 4,
-        title: "sdfdsfhfhfghfhffwfg",
-        completed: false,
-    }
-];
+import { Service } from "../../../services/axios";
+import axios from "axios";
 
 const TaskList = () => {
+    const loggedInContext = useContext(LoggedInContext);
     const modalContext = useContext(ModalContext);
+    const tasksContext = useContext(TasksContext);
+
+    if (!loggedInContext) {
+        throw new Error(
+            "LoggedInContext must be used within a LoggedInContextProvider"
+        );
+    }
+
     if (!modalContext) {
         throw new Error(
             "ModalContext must be used within a ModalContextProvider"
         );
     }
-    const { setModal, setType } = modalContext;
-
-    const tasksContext = useContext(TasksContext);
     if (!tasksContext) {
         throw new Error(
             "TasksContext must be used within a TasksContextProvider"
         );
     }
+
+    const { setloggedIn } = loggedInContext;
+    const { setModal, setType, setId } = modalContext;
     const { tasks, setTasks } = tasksContext;
 
-    useEffect(() => {
-        setTasks(data);
-    }, [data, setTasks]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [fetchError, setFetchError] = useState(false);
 
-    const handleEditClick = () => {
+    useEffect(() => {
+        const fetchTasks = async () => {
+            try {
+                const allTasks = await Service.getAllTasks();
+                setTasks(allTasks);
+            } catch (error) {
+                if (axios.isAxiosError(error)) {
+                    console.error(
+                        "Axios error fetching tasks:",
+                        error.response?.data || error.message
+                    );
+                } else if (error instanceof Error) {
+                    console.error("Error fetching tasks:", error.message);
+                } else {
+                    console.error("Unknown error fetching tasks:", error);
+                }
+                setFetchError(true);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchTasks();
+    }, [setTasks]);
+
+    if (!tasks) {
+        return <div>No tasks found</div>;
+    }
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (fetchError) {
+        return <div>Error fetching tasks. Please try again.</div>; // Render fetch error message
+    }
+
+    if (!localStorage.getItem("token")) {
+        setloggedIn(false);
+    }
+
+    const handleEditClick = (id: number | undefined) => {
+        if (id === undefined) return;
+        setId(id);
         setModal(true);
-        setType({ action: "update", fields: ["description"] });
+        setType({ action: "update", fields: ["title"] });
     };
 
-    const handleDeleteClick = () => {
+    const handleDeleteClick = (id: number | undefined) => {
+        if (id === undefined) return;
+        setId(id);
         setModal(true);
         setType({ action: "delete", fields: [] });
-    };
-
-    const [draggedItem, setDraggedItem] = useState<TaskProps | null>(null);
-
-    const handleDragStart = (item: TaskProps) => {
-        setDraggedItem(item);
-    };
-
-    const handleDrop = (targetItem: TaskProps) => {
-        if (draggedItem === null) return;
-
-        const draggedIndex = tasks.indexOf(draggedItem);
-        const targetIndex = tasks.indexOf(targetItem);
-
-        if (draggedIndex !== -1 && targetIndex !== -1) {
-            const newItems = [...tasks];
-            [newItems[draggedIndex], newItems[targetIndex]] = [
-                newItems[targetIndex],
-                newItems[draggedIndex],
-            ];
-            setTasks(newItems);
-        }
-
-        setDraggedItem(null);
     };
 
     return (
         <div className="task-list">
             {tasks.map((task) => (
-                <li
-                    key={task.id}
-                    className="list"
-                    draggable
-                    onDragStart={() => handleDragStart(task)}
-                    onDrop={() => handleDrop(task)}
-                    onDragOver={(e) => e.preventDefault()}
-                >
+                <li key={task.id} className="list">
                     <fieldset key={task.id}>
-                        <legend>Posted by: {task.id}</legend>
+                        <legend>
+                            Posted by:{" "}
+                            {task.user ? task.user.username : "Unknown"}
+                        </legend>
                         <div className="list-content">
                             <p className="description">{task.title}</p>
-                            <button
-                                className="btn-edit"
-                                onClick={handleEditClick}
-                            >
-                                <RxUpdate />
-                            </button>
-                            <button
-                                className="btn-delete"
-                                onClick={handleDeleteClick}
-                            >
-                                <MdDeleteForever />
-                            </button>
+
+                            <>
+                                <button
+                                    className="btn-edit"
+                                    onClick={() => handleEditClick(task.id)}
+                                >
+                                    <RxUpdate />
+                                </button>
+                                <button
+                                    className="btn-delete"
+                                    onClick={() => handleDeleteClick(task.id)}
+                                >
+                                    <MdDeleteForever />
+                                </button>
+                            </>
                         </div>
                     </fieldset>
                 </li>

@@ -1,4 +1,4 @@
-import { useState, createContext } from "react";
+import { useState, createContext, useEffect } from "react";
 
 interface LoggedInContextType {
     loggedIn: boolean;
@@ -15,6 +15,11 @@ const LoggedInContextProvider: React.FC<LoggedInContextProviderProps> = ({
     children,
 }) => {
     const [loggedIn, setloggedIn] = useState<boolean>(false);
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        setloggedIn(!!token);
+    }, []);
 
     return (
         <LoggedInContext.Provider value={{ loggedIn, setloggedIn }}>

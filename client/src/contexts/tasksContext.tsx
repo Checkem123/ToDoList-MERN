@@ -1,10 +1,13 @@
 import { useState, createContext } from "react";
 
 export interface TaskProps {
-    userId: number;
-    id: number;
+    id?: number;
     title: string;
     completed: boolean;
+    user?: {
+        id: number;
+        username: string;
+    };
 }
 
 interface TasksContextType {

@@ -72,4 +72,9 @@ const login = async (req, res) => {
     });
 };
 
-module.exports = { register, login };
+const getUsers = async (req, res) => {
+    const users = await User.find().populate("tasks", { id: 1, title: 1 });
+    res.status(200).json(users);
+};
+
+module.exports = { register, login, getUsers };

@@ -3,13 +3,16 @@ import App from "./App.tsx";
 import { ModalContextProvider } from "./contexts/modalContext.tsx";
 import { LoggedInContextProvider } from "./contexts/loggedInContext.tsx";
 import { TasksContextProvider } from "./contexts/tasksContext.tsx";
+import { UserContextProvider } from "./contexts/userContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <ModalContextProvider>
-        <LoggedInContextProvider>
-            <TasksContextProvider>
-                <App />
-            </TasksContextProvider>
-        </LoggedInContextProvider>
+        <UserContextProvider>
+            <LoggedInContextProvider>
+                <TasksContextProvider>
+                    <App />
+                </TasksContextProvider>
+            </LoggedInContextProvider>
+        </UserContextProvider>
     </ModalContextProvider>
 );

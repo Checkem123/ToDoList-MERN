@@ -17,9 +17,10 @@ const authCheck = (req, res, next) => {
         }
 
         req.user = decoded;
+
         next();
     } catch (error) {
-        console.log("Broblem with dogen", error);
+        console.error("Error in authentication middleware:", error);
         next(error);
     }
 };
